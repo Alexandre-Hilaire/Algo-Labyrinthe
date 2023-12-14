@@ -1,16 +1,18 @@
 <?php
+
 $labyrinthe =[
-    ['.', '□', '.', '.', '.', '.', '.'],
-    ['.', '□', '.', '□', '□', '.', '□'],
-    ['.', '□', '.', '□', '.', '.', '.'],
-    ['.', '.', '.', '.', '□', '□', '.'],
-    ['.', '□', '.', '□', '.', '.', '.'],
-    ['.', '□', '.', '.', '.', '□', '.']
+    [".", "M", '.', '.', '.', '.', '.'],
+    ['.', "M", '.', "M", "M", '.', "M"],
+    ['.', "M", '.', "M", '.', '.', '.'],
+    ['.', '.', '.', '.', "M", "M", '.'],
+    ['.', "M", '.', "M", '.', '.', '.'],
+    ['.', "M", '.', '.', '.', "M", '.']
 
 ];
 
 
-function affiche_terrain($labyrinthe) {
+function affiche_terrain($labyrinthe): void
+{
 
 //    petite boucle pour simuler un rafraichissement de la console
     for ($i = 0; $i < 50; $i++) {
@@ -19,7 +21,10 @@ function affiche_terrain($labyrinthe) {
 
 //    Boucle pour afficher le tableau 2D
     foreach ($labyrinthe as $row) {
-        echo " " . implode("\t", $row) . " " . PHP_EOL;
+        foreach ($row as $elements){
+            print_r(" " . $elements[0] . " ");
+        }
+        echo PHP_EOL;
     }
 }
 
@@ -29,19 +34,21 @@ function check($case_joueur, $labyrinthe) {
     $x_max_length = count($labyrinthe[0]) -1;
     $y_max_length = count($labyrinthe) -1;
 
-    if ($position_joueur_y < $y_max_length && $labyrinthe[$position_joueur_y + 1][$position_joueur_x] !== "□" && $labyrinthe[$position_joueur_y + 1][$position_joueur_x] === '.') {
-        return "sud";
+    if ($position_joueur_y < $y_max_length && isset($labyrinthe[$position_joueur_y + 1][$position_joueur_x]) && $labyrinthe[$position_joueur_y + 1][$position_joueur_x] !== "M" && $labyrinthe[$position_joueur_y + 1][$position_joueur_x] === '.') {
+        return [$position_joueur_y + 1, $position_joueur_x];
     }
-    if ($position_joueur_x < $x_max_length && $labyrinthe[$position_joueur_y][$position_joueur_x + 1] !== "□" && $labyrinthe[$position_joueur_y][$position_joueur_x + 1] === '.') {
-        return "est";
+    else if ($position_joueur_x < $x_max_length && isset($labyrinthe[$position_joueur_y][$position_joueur_x + 1]) && $labyrinthe[$position_joueur_y][$position_joueur_x + 1] !== "M" && $labyrinthe[$position_joueur_y][$position_joueur_x + 1] === '.') {
+        return [$position_joueur_y, $position_joueur_x + 1];
     }
-    if ($position_joueur_y > 0 && $position_joueur_y < $y_max_length && $labyrinthe[$position_joueur_y - 1][$position_joueur_x] !== "□" && $labyrinthe[$position_joueur_y - 1][$position_joueur_x] === '.') {
-        return "nord";
+    else if ($position_joueur_y > 0 && $position_joueur_y < $y_max_length && isset($labyrinthe[$position_joueur_y - 1][$position_joueur_x]) && $labyrinthe[$position_joueur_y - 1][$position_joueur_x] !== "M" && $labyrinthe[$position_joueur_y - 1][$position_joueur_x] === '.') {
+        return [$position_joueur_y -1, $position_joueur_x];
     }
-    if ($position_joueur_x > 0 && $position_joueur_x <= $x_max_length && $labyrinthe[$position_joueur_y][$position_joueur_x - 1] !== "□" && $labyrinthe[$position_joueur_y][$position_joueur_x - 1] === '.') {
-        return "ouest";
+    else if ($position_joueur_x > 0 && $position_joueur_x <= $x_max_length && isset($labyrinthe[$position_joueur_y][$position_joueur_x - 1]) && $labyrinthe[$position_joueur_y][$position_joueur_x - 1] !== "M" && $labyrinthe[$position_joueur_y][$position_joueur_x - 1] === '.') {
+        return [$position_joueur_y, $position_joueur_x - 1];
     }
-    return "bloqué";
+    else {
+        return "bloqué";
+    }
 }
 
 $case_depart = 'S';
@@ -56,6 +63,15 @@ $case_joueur = $coordonees_case_depart;
 
 sleep(2);
 affiche_terrain($labyrinthe);
-//While (($case_joueur) !== $case_arrivee){
-    echo check($case_joueur, $labyrinthe);
-//}
+While (($case_joueur) !== $case_arrivee){
+//    $case_precedente = [ [$case_joueur[1]], [$case_joueur[0] ]];
+    if (check($case_joueur, $labyrinthe) === "bloqué") {
+        echo "bloqué";
+        die();
+    } else {
+        $case_joueur = check($case_joueur, $labyrinthe);
+//        $labyrinthe[[$case_joueur[1]][$case_joueur[0]]] = $case_precedente;
+        affiche_terrain($labyrinthe);
+    }
+
+}
