@@ -31,8 +31,8 @@ function affiche_terrain($labyrinthe): void
 function check($case_joueur, $labyrinthe) {
     $position_joueur_x = $case_joueur[1];
     $position_joueur_y = $case_joueur[0];
-    $x_max_length = count($labyrinthe[0])-1;
-    $y_max_length = count($labyrinthe)-1;
+    $x_max_length = count($labyrinthe[1])-1;
+    $y_max_length = count($labyrinthe[0])-1;
 
     if (($position_joueur_y < $y_max_length && ($labyrinthe[$position_joueur_y + 1][$position_joueur_x] === '.')) || $labyrinthe[$position_joueur_y + 1][$position_joueur_x] === 'G' ){
         return [$position_joueur_y + 1, $position_joueur_x];
@@ -61,6 +61,7 @@ $case_depart = 'S';
 $case_arrivee = 'G';
 $coordonees_case_depart = [0, 0];
 $coordonees_case_arrivee = [2, 4];
+$pas = 0;
 
 $labyrinthe[$coordonees_case_depart[0]][$coordonees_case_depart[1]] = $case_depart;
 $labyrinthe[$coordonees_case_arrivee[0]][$coordonees_case_arrivee[1]] = $case_arrivee;
@@ -78,9 +79,11 @@ While (($case_joueur) !== $coordonees_case_arrivee){
     } else {
         $case_joueur = check($case_joueur, $labyrinthe);
         $labyrinthe[$case_joueur[0]][$case_joueur[1]] = [$case_precedente[0], $case_precedente[1]];
+        $pas++;
     }
 
 
     affiche_terrain($labyrinthe);
 }
 echo "La sortie à été trouvée !";
+echo $pas;
